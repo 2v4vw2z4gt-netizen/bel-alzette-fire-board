@@ -1,0 +1,851 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+<title>Bel-Alzette Fire Board</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Nunito+Sans:wght@400;600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<style>
+/* Layout: puma-style campaign site — orange brand band, English eyebrow + big heading sections, numbered bulletin lists, warm footer; floor plan + live field reports added */
+:root{
+  --brand:#db6a41; --brand-deep:#b44f2b; --brand-soft:#fbe6dc;
+  --bg:#fffaf6; --surface:#ffffff; --ink:#2b211c; --muted:#7a6b62; --line:#eedfd5; --floor:#f7efe9; --corr:#fffdfb; --map-bg:#efe3d9; --wall-a:#efe4dc; --wall-b:#dccbbe; --wall-cap:#5a4a40;
+  --ok:#2f8f5b; --warn:#c98310; --crit:#c8321f; --rescue:#2459b8;
+  --ok-bg:#e4f4ea; --warn-bg:#fbf0d9; --crit-bg:#fbe2de; --rescue-bg:#e2eafb;
+  --f-display:"Baloo 2","Nunito Sans",system-ui,sans-serif;
+  --f-body:"Nunito Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --brand:#ec7f56; --brand-deep:#f39a77; --brand-soft:#3a2219;
+  --bg:#1b1512; --surface:#251d19; --ink:#f5ebe4; --muted:#b4a196; --line:#3b2e27; --floor:#2c221d; --corr:#211915; --map-bg:#140f0c; --wall-a:#4d3e35; --wall-b:#3b2f28; --wall-cap:#c9b6aa;
+  --ok:#5cc58b; --warn:#f0b34a; --crit:#ff6a55; --rescue:#6f9bff;
+  --ok-bg:#183126; --warn-bg:#352a14; --crit-bg:#3d1c17; --rescue-bg:#1a2540; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --brand:#ec7f56; --brand-deep:#f39a77; --brand-soft:#3a2219;
+  --bg:#1b1512; --surface:#251d19; --ink:#f5ebe4; --muted:#b4a196; --line:#3b2e27; --floor:#2c221d; --corr:#211915; --map-bg:#140f0c; --wall-a:#4d3e35; --wall-b:#3b2f28; --wall-cap:#c9b6aa;
+  --ok:#5cc58b; --warn:#f0b34a; --crit:#ff6a55; --rescue:#6f9bff;
+  --ok-bg:#183126; --warn-bg:#352a14; --crit-bg:#3d1c17; --rescue-bg:#1a2540; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.6}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--brand)}
+a{color:inherit}
+.wrap{max-width:1140px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+
+/* alert ticker */
+.ticker{background:var(--crit);color:#fff;font-weight:800;font-size:14px;overflow:hidden;white-space:nowrap}
+.ticker .wrap{display:flex;gap:12px;align-items:center;padding-block:7px}
+.ticker .tag{background:#fff;color:#c8321f;border-radius:4px;padding:0 8px;flex:none;letter-spacing:.06em}
+.ticker .run{overflow:hidden;min-width:0}
+.ticker .run span{display:inline-block;padding-left:100%;animation:run 30s linear infinite}
+@keyframes run{to{transform:translateX(-100%)}}
+
+/* header */
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--brand);color:#fff}
+header .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-block:12px}
+.lockup{display:flex;align-items:center;gap:10px;text-decoration:none}
+.lockup .mark{width:40px;height:40px;border-radius:50%;background:#fff;display:grid;place-items:center;flex:none}
+.lockup .mark svg{width:22px;height:22px}
+.lockup small{display:block;font-size:11px;letter-spacing:.14em;opacity:.85;font-weight:700}
+.lockup b{font-family:var(--f-display);font-size:21px;font-weight:800;line-height:1.05}
+nav{display:flex;gap:2px;flex-wrap:wrap}
+nav a{text-decoration:none;font-weight:800;font-size:14px;padding:6px 11px;border-radius:999px}
+nav a:hover,nav a:focus-visible{background:rgba(255,255,255,.2);outline:none}
+@media(max-width:900px){nav{display:none}}
+
+/* hero (compact, so the map sits in the first screen) */
+.hero{background:var(--brand);color:#fff}
+.hero .wrap{display:grid;grid-template-columns:1fr auto;gap:20px;align-items:center;padding-block:16px 6px}
+@media(max-width:760px){.hero .wrap{grid-template-columns:1fr}}
+.level{display:inline-flex;gap:8px;align-items:center;background:#fff;color:#c8321f;font-weight:800;border-radius:999px;padding:3px 14px 3px 10px;font-size:13px}
+.level i{width:10px;height:10px;border-radius:50%;background:#c8321f;animation:blink 1.2s ease-in-out infinite}
+@keyframes blink{50%{opacity:.2}}
+.hero h1{font-family:var(--f-display);font-weight:800;font-size:clamp(26px,3.6vw,40px);line-height:1.08;margin:8px 0 0;text-wrap:balance}
+.hero h1 em{font-style:normal;background:#fff;color:#b44f2b;padding:0 .18em;border-radius:8px}
+.clock{background:rgba(0,0,0,.14);border-radius:14px;padding:10px 16px;display:flex;gap:20px;flex-wrap:wrap}
+.clock .row{display:grid;gap:0}
+.clock label{font-size:12px;opacity:.9;font-weight:700}
+.clock output{font-family:var(--f-mono);font-size:20px;font-variant-numeric:tabular-nums;font-weight:600}
+.wave{display:block;width:100%;height:24px;color:var(--bg)}
+.intro{margin:-6px 0 18px;max-width:46em;color:var(--muted)}
+
+/* sections */
+section{padding-block:40px}
+section + section{padding-top:8px}
+.eyebrow{font-family:var(--f-mono);letter-spacing:.18em;font-size:12px;color:var(--brand);font-weight:600}
+h2{font-family:var(--f-display);font-weight:800;font-size:34px;line-height:1.1;margin:2px 0 18px;text-wrap:balance}
+.more{display:inline-block;margin-top:18px;border:2px solid var(--brand);color:var(--brand);font-weight:800;text-decoration:none;border-radius:999px;padding:6px 20px}
+.more:hover,.more:focus-visible{background:var(--brand);color:#fff;outline:none}
+
+/* stats */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+@media(max-width:760px){.stats{grid-template-columns:repeat(2,1fr)}}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px}
+.stat span{font-size:13px;color:var(--muted);font-weight:700}
+.stat b{display:block;font-family:var(--f-mono);font-size:34px;font-variant-numeric:tabular-nums;line-height:1.2}
+.stat small{color:var(--muted);font-size:12px}
+.stat.hot b{color:var(--crit)}
+.progress{margin-top:14px;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px}
+.progress .top{display:flex;justify-content:space-between;font-weight:800}
+.bar{height:14px;background:var(--brand-soft);border-radius:999px;overflow:hidden;margin-top:10px}
+.bar i{display:block;height:100%;background:var(--brand);border-radius:999px;transition:width .8s}
+
+/* floor plan — 3D map */
+#plan{padding-top:14px}
+.plan-card{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:14px}
+.plan-head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:10px}
+.plan-head h2{margin:0;font-size:28px}
+.layers{display:flex;gap:6px;flex-wrap:wrap}
+.layers label{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;border:1px solid var(--line);border-radius:999px;padding:4px 12px 4px 8px;cursor:pointer;user-select:none}
+.layers input{accent-color:var(--brand);margin:0}
+.map{position:relative;height:clamp(380px,62vh,640px);overflow:hidden;border-radius:14px;background:var(--map-bg);perspective:2200px;touch-action:none;cursor:grab;outline:none;user-select:none}
+.map:focus-visible{box-shadow:inset 0 0 0 3px var(--brand)}
+.map.dragging{cursor:grabbing}
+.stage{position:absolute;left:50%;top:50%;width:1060px;height:520px;margin:-260px 0 0 -530px;transform-style:preserve-3d;transform-origin:530px 260px;transition:transform .35s ease}
+.floorsvg{position:absolute;left:0;top:0;width:1060px;height:520px;display:block;max-width:none}
+.wall{position:absolute;left:0;top:0;height:36px;transform-origin:0 0;background:var(--wall-a);border-bottom:3px solid var(--wall-cap)}
+.wall.v{background:var(--wall-b)}
+.wall.hot{background:var(--crit-bg);border-bottom-color:var(--crit);animation:hot 1s steps(2,jump-none) infinite}
+@keyframes hot{50%{background:var(--crit)}}
+.wall.firedoor{background:var(--crit);border-bottom-color:var(--crit);height:42px}
+.bb{position:absolute;left:0;top:0;width:90px;height:130px;transform-origin:45px 130px;transition:transform .35s ease;pointer-events:none}
+.map.dragging .stage,.map.dragging .bb{transition:none}
+.pin{position:absolute;bottom:0;left:45px;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center}
+.pin .badge{min-width:32px;height:32px;padding:0 4px;border-radius:8px;display:grid;place-items:center;font-family:var(--f-mono);font-weight:600;font-size:14px;color:#fff;border:3px solid var(--surface);box-shadow:0 3px 8px rgba(0,0,0,.25)}
+.pin .stem{width:3px;height:34px;border-radius:2px}
+.pin .foot{width:12px;height:5px;border-radius:50%;opacity:.5}
+.pin.ff .badge{background:var(--rescue)} .pin.ff .stem,.pin.ff .foot{background:var(--rescue)}
+.pin.ev .badge{background:var(--ok);border-radius:50%} .pin.ev .stem,.pin.ev .foot{background:var(--ok)}
+.pin.fire .badge{width:64px;height:64px;border-radius:50%;background:var(--crit);border-width:4px;animation:fblink .9s steps(2,jump-none) infinite}
+.pin.fire .badge svg{width:34px;height:34px}
+.pin.fire .tag{font-family:var(--f-mono);font-weight:600;font-size:13px;letter-spacing:.12em;background:var(--crit);color:#fff;border-radius:6px;padding:1px 8px;margin-bottom:4px}
+.pin.fire .stem{background:var(--crit);height:22px}
+.map-ctrl{position:absolute;right:max(10px,env(safe-area-inset-right,0px));top:10px;display:grid;gap:6px;justify-items:end;cursor:default}
+.ctrl-group{display:flex;gap:2px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:3px;box-shadow:0 2px 10px rgba(0,0,0,.12)}
+.ctrl-group button{font:inherit;font-weight:800;font-size:18px;min-width:34px;height:34px;border:0;border-radius:8px;background:transparent;color:var(--ink);cursor:pointer;display:grid;place-items:center;padding:0}
+.ctrl-group button.wide{font-size:13px;padding:0 10px}
+.ctrl-group button:hover{background:var(--brand-soft)}
+.ctrl-group button:focus-visible{outline:2px solid var(--brand);outline-offset:-2px}
+.ctrl-group svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.pad{display:grid;grid-template-columns:repeat(3,34px);grid-template-rows:repeat(3,34px)}
+.pad .u{grid-area:1/2}.pad .l{grid-area:2/1}.pad .c{grid-area:2/2}.pad .r{grid-area:2/3}.pad .d{grid-area:3/2}
+.zoomlvl{font-family:var(--f-mono);font-size:12px;font-weight:600;color:var(--muted);display:grid;place-items:center;min-width:46px}
+.map-hint{position:absolute;left:10px;bottom:8px;margin:0;font-size:12px;font-weight:700;color:var(--muted);background:var(--surface);border-radius:999px;padding:3px 10px;pointer-events:none}
+@media(max-width:600px){.map{height:clamp(420px,70vh,620px)}.map-ctrl{top:auto;bottom:8px;left:8px;right:8px;display:flex;flex-wrap:wrap;justify-content:center;align-items:flex-end}.map-hint{bottom:auto;top:8px}}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.legend{display:flex;gap:8px 18px;flex-wrap:wrap;margin-top:12px;font-size:13px;color:var(--muted);font-weight:700}
+.legend span{display:inline-flex;align-items:center;gap:7px}
+.legend svg{width:26px;height:18px;flex:none}
+.teams{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:14px}
+@media(max-width:760px){.teams{grid-template-columns:1fr}}
+.team{border:1px solid var(--line);border-radius:14px;padding:12px 14px;min-width:0}
+.team h3{margin:0 0 6px;font-size:15px;display:flex;align-items:center;gap:8px}
+.team ul{margin:0;padding:0;list-style:none;display:grid;gap:4px;font-size:14px}
+.team li{display:grid;grid-template-columns:42px 1fr;gap:8px}
+.team li code{font-family:var(--f-mono);font-weight:600;font-size:13px}
+.team.rescue h3{color:var(--rescue)} .team.evac h3{color:var(--ok)}
+
+/* svg styling via tokens */
+.p-floor{fill:var(--floor)}
+.p-room{fill:var(--surface);stroke:var(--line);stroke-width:1.5}
+.p-corr{fill:var(--corr)}
+.p-stair{fill:var(--rescue-bg);stroke:var(--line);stroke-width:1.5}
+.p-exit{fill:var(--ok-bg);stroke:var(--line);stroke-width:1.5}
+.p-off{fill:var(--line)}
+.p-steps line{stroke:var(--muted);stroke-width:1.5}
+.p-lbl{fill:var(--ink);font-family:var(--f-body);font-size:18px;font-weight:800}
+.p-sub{fill:var(--muted);font-family:var(--f-body);font-size:13px;font-weight:800}
+.p-smoke{fill:url(#hatch)}
+.hatch-line{stroke:var(--crit);stroke-width:2;opacity:.28}
+.p-fire-zone{fill:var(--crit-bg)}
+.fire-core{fill:var(--crit)}
+.fire-ring{fill:none;stroke:var(--crit);stroke-width:4;transform-box:fill-box;transform-origin:center;animation:ring 1.6s ease-out infinite}
+.fire-ring.r2{animation-delay:.8s}
+@keyframes ring{from{transform:scale(.4);opacity:.9}to{transform:scale(2.6);opacity:0}}
+.fire-blink{animation:fblink .9s steps(2,jump-none) infinite}
+@keyframes fblink{50%{opacity:.3}}
+.route{fill:none;stroke-width:7;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:16 11;animation:flow 1s linear infinite}
+@keyframes flow{to{stroke-dashoffset:-27}}
+.route.rescue{stroke:var(--rescue)}
+.route.evac{stroke:var(--ok)}
+.arrow-rescue{fill:var(--rescue)} .arrow-evac{fill:var(--ok)}
+.sym-ff{fill:var(--rescue)}
+.sym-ev{fill:var(--ok)}
+.sym-pt{fill:var(--warn);stroke:var(--surface);stroke-width:2}
+.sym-ok{fill:var(--ok)}
+.map.no-rescue .lay-rescue,.map.no-evac .lay-evac,.map.no-ff .lay-ff,.map.no-ev .lay-ev{display:none}
+
+/* floor status */
+.floors{display:grid;gap:8px}
+.floor{display:grid;grid-template-columns:62px 1fr auto;gap:14px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 14px}
+.floor .no{font-family:var(--f-mono);font-weight:600;font-size:20px}
+.floor .name{min-width:0}
+.floor .name b{display:block}
+.floor .name small{color:var(--muted)}
+.pill{font-size:13px;font-weight:800;border-radius:999px;padding:3px 12px;white-space:nowrap}
+.pill.crit{background:var(--crit-bg);color:var(--crit)}
+.pill.warn{background:var(--warn-bg);color:var(--warn)}
+.pill.ok{background:var(--ok-bg);color:var(--ok)}
+.pill.muted{background:var(--line);color:var(--muted)}
+.floor.is-fire{border-color:var(--crit);box-shadow:inset 5px 0 0 var(--crit)}
+.pills{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+
+/* reports */
+.rep{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:24px;align-items:start}
+@media(max-width:860px){.rep{grid-template-columns:1fr}}
+.form{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:18px;display:grid;gap:12px}
+.form h3{margin:0;font-size:18px}
+.field{display:grid;gap:4px}
+.field label,.field legend{font-size:13px;font-weight:800;color:var(--muted)}
+.field input,.field select,.field textarea{font:inherit;color:var(--ink);background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:9px 11px;width:100%}
+.field textarea{min-height:90px;resize:vertical}
+.field input:focus-visible,.field select:focus-visible,.field textarea:focus-visible{outline:none;border-color:var(--brand);box-shadow:0 0 0 3px var(--brand-soft)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:480px){.row2{grid-template-columns:1fr}}
+fieldset.field{border:0;padding:0;margin:0}
+.prio{display:flex;gap:8px;flex-wrap:wrap}
+.prio label{display:inline-flex}
+.prio input{position:absolute;opacity:0;pointer-events:none}
+.prio span{border:1.5px solid var(--line);border-radius:999px;padding:5px 14px;font-weight:800;font-size:13px;cursor:pointer;color:var(--muted)}
+.prio input:checked + span.c{background:var(--crit);border-color:var(--crit);color:#fff}
+.prio input:checked + span.u{background:var(--warn);border-color:var(--warn);color:#fff}
+.prio input:checked + span.r{background:var(--ok);border-color:var(--ok);color:#fff}
+.prio input:focus-visible + span{outline:3px solid var(--brand);outline-offset:2px}
+.btn{font:inherit;font-weight:800;background:var(--brand);color:#fff;border:0;border-radius:999px;padding:10px 20px;cursor:pointer}
+.btn:disabled{opacity:.55;cursor:wait}
+.btn:focus-visible,.btn-sm:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+.btn-sm{font:inherit;font-size:12px;font-weight:800;background:transparent;color:var(--ink);border:1.5px solid var(--line);border-radius:999px;padding:3px 12px;cursor:pointer}
+.btn-sm:hover{border-color:var(--ok);color:var(--ok)}
+.msg{font-size:13px;font-weight:700;min-height:1.2em;margin:0}
+.msg.err{color:var(--crit)} .msg.good{color:var(--ok)}
+.feed-head{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.feed-head .counts{display:flex;gap:8px;flex-wrap:wrap}
+.filter{display:flex;gap:4px;flex-wrap:wrap}
+.filter button{font:inherit;font-size:13px;font-weight:800;background:transparent;color:var(--muted);border:1.5px solid var(--line);border-radius:999px;padding:3px 12px;cursor:pointer}
+.filter button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.filter button:focus-visible{outline:3px solid var(--brand);outline-offset:2px}
+.feed{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.item{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 14px 12px 18px;position:relative;display:grid;gap:4px;min-width:0}
+.item::before{content:"";position:absolute;left:0;top:10px;bottom:10px;width:5px;border-radius:0 4px 4px 0;background:var(--muted)}
+.item.p-critical::before{background:var(--crit)} .item.p-urgent::before{background:var(--warn)} .item.p-routine::before{background:var(--ok)}
+.item.resolved{opacity:.6}
+.item .top{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.item time{font-family:var(--f-mono);font-size:13px;font-weight:600}
+.item b{font-size:15px}
+.item p{margin:0;color:var(--ink);overflow-wrap:anywhere}
+.item .meta{display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap;font-size:13px;color:var(--muted)}
+.empty{border:2px dashed var(--line);border-radius:14px;padding:22px;text-align:center;color:var(--muted)}
+.empty b{display:block;color:var(--ink);font-size:16px;margin-bottom:4px}
+.note{font-size:13px;background:var(--warn-bg);color:var(--ink);border-radius:10px;padding:8px 12px;margin:0 0 10px}
+
+/* two col */
+.two{display:grid;grid-template-columns:1fr 1fr;gap:36px}
+@media(max-width:860px){.two{grid-template-columns:1fr}}
+.two > div{min-width:0}
+.list{list-style:none;margin:0;padding:0;border-top:2px solid var(--ink)}
+.list li{border-bottom:1px solid var(--line);padding:14px 0;display:grid;grid-template-columns:auto 1fr;gap:4px 14px}
+.list .num{font-family:var(--f-mono);font-size:13px;color:var(--brand);font-weight:600;grid-row:span 2;padding-top:3px;white-space:nowrap}
+.list b{font-size:16px}
+.list p{margin:0;color:var(--muted);font-size:14px}
+.list time{font-family:var(--f-mono);font-size:12px;color:var(--muted);margin-right:6px}
+.list li.new b::after{content:"NEW";font-family:var(--f-mono);font-size:10px;background:var(--crit);color:#fff;border-radius:4px;padding:1px 5px;margin-left:8px;vertical-align:middle}
+
+/* assembly */
+.points{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+@media(max-width:760px){.points{grid-template-columns:1fr}}
+.point{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px;display:grid;gap:6px;align-content:start}
+.point .head{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.point b{font-size:17px}
+.point p{margin:0;color:var(--muted);font-size:14px}
+.point .count{font-family:var(--f-mono);font-variant-numeric:tabular-nums;color:var(--ink)}
+
+.cta{background:var(--brand-soft)}
+.cta .wrap{display:flex;gap:16px;justify-content:space-between;align-items:center;flex-wrap:wrap;padding-block:28px}
+.cta h3{font-family:var(--f-display);font-weight:800;font-size:26px;margin:0}
+.hotline{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.hotline code{font-family:var(--f-mono);font-size:22px;background:var(--surface);border:2px solid var(--brand);border-radius:999px;padding:4px 18px;user-select:all}
+
+footer{background:var(--brand);color:#fff}
+footer .wrap{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:24px;padding-block:32px}
+@media(max-width:760px){footer .wrap{grid-template-columns:1fr}}
+footer h4{margin:0 0 6px;font-size:14px;letter-spacing:.08em}
+footer p{margin:0;font-size:14px;opacity:.92}
+.demo{font-size:12px;text-align:center;padding-block:10px;padding-bottom:84px;background:var(--brand-deep);color:#fff}
+
+/* floating report shortcut */
+.fab{position:fixed;z-index:20;right:max(16px,calc(env(safe-area-inset-right,0px) + 12px));bottom:calc(16px + env(safe-area-inset-bottom,0px));display:flex;align-items:center;gap:10px;background:var(--crit);color:#fff;text-decoration:none;border-radius:999px;padding:10px 16px 10px 12px;box-shadow:0 6px 20px rgba(120,30,10,.35);border:3px solid var(--surface);transition:transform .15s}
+.fab:hover{transform:translateY(-2px)}
+.fab:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
+.fab-dot{width:12px;height:12px;border-radius:50%;background:#fff;flex:none;animation:blink 1.2s ease-in-out infinite}
+.fab-text{display:grid;line-height:1.2}
+.fab-text b{font-size:15px}
+.fab-text small{font-size:12px;opacity:.9;font-family:var(--f-mono)}
+.fab-crit{background:#fff;color:#c8321f;font-family:var(--f-mono);font-weight:600;font-size:13px;border-radius:999px;min-width:24px;height:24px;display:grid;place-items:center;padding:0 6px}
+.fab-crit[hidden]{display:none}
+section{scroll-margin-top:calc(72px + env(safe-area-inset-top,0px))}
+@media(max-width:480px){.fab{padding:8px 14px 8px 10px}.fab-text small{display:none}}
+.form.flash{animation:flash 1.2s ease}
+@keyframes flash{0%,40%{box-shadow:0 0 0 4px var(--crit)}100%{box-shadow:0 0 0 0 transparent}}
+
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.ticker .run span{padding-left:0}}
+</style>
+
+<div class="ticker" role="status">
+  <div class="wrap">
+    <span class="tag">ALERT</span>
+    <div class="run"><span>Fire on Building B, 7F. Staff and patients on 6F–8F: evacuate via the EAST stairwell or the skybridge to Building A. Do not use elevators. The ER is diverting ambulance arrivals to nearby hospitals.</span></div>
+  </div>
+</div>
+
+<header>
+  <div class="wrap">
+    <a class="lockup" href="#top" aria-label="Hôpital Bel-Alzette Emergency Command">
+      <span class="mark"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3h6v6h6v6h-6v6H9v-6H3V9h6z" fill="#db6a41"/></svg></span>
+      <span><small>EMERGENCY COMMAND</small><b>Hôpital Bel-Alzette</b></span>
+    </a>
+    <nav aria-label="Sections">
+      <a href="#plan">Floor Plan</a>
+      <a href="#situation">Situation</a>
+      <a href="#floors">Floors</a>
+      <a href="#reports">Field Reports</a>
+      <a href="#updates">Updates</a>
+      <a href="#assembly">Assembly</a>
+    </nav>
+  </div>
+</header>
+
+<div class="hero" id="top">
+  <div class="wrap">
+    <div>
+      <span class="level"><i></i>CODE RED · Level 2 Fire Response</span>
+      <h1>Building B, 7F fire. <em>Evacuation underway.</em></h1>
+    </div>
+    <div class="clock" aria-label="Time">
+      <div class="row"><label for="now">Current time</label><output id="now">--:--:--</output></div>
+      <div class="row"><label for="elapsed">Since first alarm</label><output id="elapsed">00:00:00</output></div>
+      <div class="row"><label for="next">Next refresh</label><output id="next">00:30</output></div>
+    </div>
+  </div>
+  <svg class="wave" viewBox="0 0 1200 36" preserveAspectRatio="none" aria-hidden="true"><path d="M0 18 C150 36 300 0 450 18 S750 36 900 18 S1100 0 1200 14 V36 H0Z" fill="currentColor"/></svg>
+</div>
+
+<main>
+  <section id="plan">
+    <div class="wrap">
+      <div class="plan-card">
+        <div class="plan-head">
+          <div><div class="eyebrow">LIVE 3D FLOOR PLAN</div><h2>Building B · 7F, surgical ward 7B</h2></div>
+          <div class="layers" aria-label="Map layers">
+            <label><input type="checkbox" id="lay-rescue" data-cls="no-rescue" checked>Rescue route</label>
+            <label><input type="checkbox" id="lay-evac" data-cls="no-evac" checked>Evacuation route</label>
+            <label><input type="checkbox" id="lay-ff" data-cls="no-ff" checked>Firefighters</label>
+            <label><input type="checkbox" id="lay-ev" data-cls="no-ev" checked>Evacuation staff</label>
+          </div>
+        </div>
+        <div class="map" id="planScroll" tabindex="0" aria-describedby="planDesc">
+          <p class="sr" id="planDesc">3D floor plan of Building B, 7th floor. Fire in the pantry on the west side. Firefighters enter from the west stairwell and the fire lift. Evacuation runs east along the corridor to the east stairwell and the skybridge to Building A. Drag or use arrow keys to move, scroll, pinch or use plus and minus to zoom.</p>
+          <div class="stage" id="stage">
+            <svg class="floorsvg" viewBox="0 0 1060 520" width="1060" height="520" aria-hidden="true">
+              <defs>
+                <pattern id="hatch" width="12" height="12" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line class="hatch-line" x1="0" y1="0" x2="0" y2="12"/></pattern>
+                <marker id="arR" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="3.4" markerHeight="3.4" orient="auto-start-reverse"><path class="arrow-rescue" d="M0 0 L10 5 L0 10z"/></marker>
+                <marker id="arE" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="3.4" markerHeight="3.4" orient="auto-start-reverse"><path class="arrow-evac" d="M0 0 L10 5 L0 10z"/></marker>
+              </defs>
+              <rect class="p-floor" x="40" y="40" width="920" height="440"/>
+              <rect class="p-corr" x="40" y="220" width="920" height="80"/>
+              <rect class="p-stair" x="40" y="40" width="100" height="180"/>
+              <g class="p-steps"><line x1="52" y1="100" x2="128" y2="100"/><line x1="52" y1="120" x2="128" y2="120"/><line x1="52" y1="140" x2="128" y2="140"/><line x1="52" y1="160" x2="128" y2="160"/><line x1="52" y1="180" x2="128" y2="180"/></g>
+              <rect class="p-room" x="140" y="40" width="120" height="180"/>
+              <rect class="p-fire-zone" x="260" y="40" width="120" height="180"/>
+              <rect class="p-room" x="380" y="40" width="120" height="180"/>
+              <rect class="p-room" x="500" y="40" width="120" height="180"/>
+              <rect class="p-room" x="620" y="40" width="120" height="180"/>
+              <rect class="p-room" x="740" y="40" width="120" height="180"/>
+              <rect class="p-exit" x="860" y="40" width="100" height="180"/>
+              <g class="p-steps"><line x1="872" y1="100" x2="948" y2="100"/><line x1="872" y1="120" x2="948" y2="120"/><line x1="872" y1="140" x2="948" y2="140"/><line x1="872" y1="160" x2="948" y2="160"/><line x1="872" y1="180" x2="948" y2="180"/></g>
+              <rect class="p-stair" x="40" y="300" width="100" height="180"/>
+              <rect class="p-room" x="140" y="300" width="120" height="180"/>
+              <rect class="p-room" x="260" y="300" width="120" height="180"/>
+              <rect class="p-room" x="380" y="300" width="180" height="180"/>
+              <rect class="p-off" x="560" y="300" width="100" height="180"/>
+              <rect class="p-room" x="660" y="300" width="100" height="180"/>
+              <rect class="p-room" x="760" y="300" width="100" height="180"/>
+              <rect class="p-room" x="860" y="300" width="100" height="180"/>
+              <rect class="p-exit" x="960" y="230" width="80" height="60"/>
+              <rect class="p-smoke" x="140" y="40" width="260" height="440"/>
+
+              <text class="p-lbl" x="52" y="66">W Stair</text><text class="p-sub" x="52" y="86">Fire crews only</text>
+              <text class="p-lbl" x="152" y="66">701</text><text class="p-sub" x="152" y="86">Cleared</text>
+              <text class="p-lbl" x="272" y="66">Pantry</text><text class="p-sub" x="272" y="86">ORIGIN OF FIRE</text>
+              <text class="p-lbl" x="392" y="66">702</text>
+              <text class="p-lbl" x="512" y="66">703</text>
+              <text class="p-lbl" x="632" y="66">704</text>
+              <text class="p-lbl" x="752" y="66">705</text>
+              <text class="p-lbl" x="872" y="66">E Stair</text><text class="p-sub" x="872" y="86">EXIT</text>
+              <text class="p-lbl" x="52" y="326">Fire Lift</text><text class="p-sub" x="52" y="346">Fire crews only</text>
+              <text class="p-lbl" x="152" y="326">711</text><text class="p-sub" x="152" y="346">Cleared</text>
+              <text class="p-lbl" x="272" y="326">712</text><text class="p-sub" x="272" y="346">Cleared</text>
+              <text class="p-lbl" x="392" y="326">Nurse Station</text>
+              <text class="p-lbl" x="572" y="326">Elevators</text><text class="p-sub" x="572" y="346">OUT OF SERVICE</text>
+              <text class="p-lbl" x="672" y="326">713</text>
+              <text class="p-lbl" x="772" y="326">714</text>
+              <text class="p-lbl" x="872" y="326">Utility</text>
+              <text class="p-sub" x="966" y="312">To Bldg A</text>
+              <text class="p-sub" x="150" y="244">SMOKE ZONE</text>
+              <text class="p-sub" x="408" y="294">Fire door closed</text>
+
+              <g class="sym-ok"><circle cx="230" cy="190" r="11"/><circle cx="230" cy="450" r="11"/><circle cx="350" cy="450" r="11"/></g>
+
+              <g transform="translate(320 140)"><circle class="fire-ring" r="24"/><circle class="fire-ring r2" r="24"/><circle class="fire-core fire-blink" r="16"/></g>
+
+              <g class="lay-rescue">
+                <path class="route rescue" d="M90 110 V262 H318 V175" marker-end="url(#arR)"/>
+                <path class="route rescue" d="M90 455 V284" marker-end="url(#arR)"/>
+              </g>
+              <g class="lay-evac">
+                <path class="route evac" d="M430 262 H906 V120" marker-end="url(#arE)"/>
+                <path class="route evac" d="M906 262 H1030" marker-end="url(#arE)"/>
+                <path class="route evac" d="M680 180 V238" marker-end="url(#arE)"/>
+                <path class="route evac" d="M560 180 V238" marker-end="url(#arE)"/>
+                <path class="route evac" d="M710 410 V290" marker-end="url(#arE)"/>
+                <path class="route evac" d="M810 410 V290" marker-end="url(#arE)"/>
+              </g>
+              <g class="sym-pt">
+                <circle cx="650" cy="120" r="9"/><circle cx="676" cy="138" r="9"/>
+                <circle cx="690" cy="445" r="9"/><circle cx="716" cy="456" r="9"/><circle cx="740" cy="440" r="9"/>
+              </g>
+            </svg>
+          </div>
+          <div class="map-ctrl">
+            <div class="ctrl-group">
+              <button type="button" data-act="out" aria-label="Zoom out">−</button>
+              <span class="zoomlvl" id="zoomLvl">100%</span>
+              <button type="button" data-act="in" aria-label="Zoom in">+</button>
+            </div>
+            <div class="ctrl-group pad">
+              <button type="button" class="u" data-act="up" aria-label="Move up"><svg viewBox="0 0 24 24"><path d="M6 15l6-6 6 6"/></svg></button>
+              <button type="button" class="l" data-act="left" aria-label="Move left"><svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></svg></button>
+              <button type="button" class="c" data-act="reset" aria-label="Reset view"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.5"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3"/></svg></button>
+              <button type="button" class="r" data-act="right" aria-label="Move right"><svg viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></svg></button>
+              <button type="button" class="d" data-act="down" aria-label="Move down"><svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></button>
+            </div>
+            <div class="ctrl-group">
+              <button type="button" data-act="rl" aria-label="Rotate left"><svg viewBox="0 0 24 24"><path d="M4 12a8 8 0 1 0 2.4-5.7"/><path d="M4 4v4h4"/></svg></button>
+              <button type="button" data-act="rr" aria-label="Rotate right"><svg viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.4-5.7"/><path d="M20 4v4h-4"/></svg></button>
+              <button type="button" class="wide" data-act="mode" id="modeBtn">2D</button>
+            </div>
+          </div>
+          <p class="map-hint">Drag to move · Scroll or pinch to zoom</p>
+        </div>
+        <div class="legend">
+          <span><svg viewBox="0 0 26 18" aria-hidden="true"><circle class="fire-core fire-blink" cx="13" cy="9" r="7"/></svg>Fire location</span>
+          <span><svg viewBox="0 0 26 18" aria-hidden="true"><rect class="p-smoke" x="1" y="1" width="24" height="16"/></svg>Smoke zone</span>
+          <span><svg viewBox="0 0 26 18" aria-hidden="true"><line x1="2" y1="9" x2="18" y2="9" class="route rescue" style="stroke-width:4;animation:none"/><path class="arrow-rescue" d="M17 4 L25 9 L17 14z"/></svg>Rescue route</span>
+          <span><svg viewBox="0 0 26 18" aria-hidden="true"><line x1="2" y1="9" x2="18" y2="9" class="route evac" style="stroke-width:4;animation:none"/><path class="arrow-evac" d="M17 4 L25 9 L17 14z"/></svg>Evacuation route</span>
+          <span><svg viewBox="0 0 26 18" aria-hidden="true"><rect class="sym-ff" x="5" y="1" width="16" height="16" rx="4"/></svg>Firefighter</span>
+          <span><svg viewBox="0 0 26 18" aria-hidden="true"><circle class="sym-ev" cx="13" cy="9" r="8"/></svg>Evacuation staff</span>
+          <span><svg viewBox="0 0 26 18" aria-hidden="true"><circle class="sym-pt" cx="13" cy="9" r="6"/></svg>Patient awaiting transfer</span>
+          <span><svg viewBox="0 0 26 18" aria-hidden="true"><circle class="sym-ok" cx="13" cy="9" r="6"/></svg>Room cleared</span>
+        </div>
+        <div class="teams">
+          <div class="team rescue">
+            <h3>Fire crews on 7F (4)</h3>
+            <ul>
+              <li><code>F1</code><span>Engine 21, attack line at pantry door</span></li>
+              <li><code>F2</code><span>Engine 21, hose backup, east side of pantry</span></li>
+              <li><code>F3</code><span>Rescue 3, search of west corridor</span></li>
+              <li><code>F4</code><span>Ladder 7, holding the west stairwell</span></li>
+            </ul>
+          </div>
+          <div class="team evac">
+            <h3>Evacuation staff on 7F (5)</h3>
+            <ul>
+              <li><code>E1</code><span>Charge nurse, corridor traffic control</span></li>
+              <li><code>E2</code><span>Nurse station, headcount and patient list</span></li>
+              <li><code>E3</code><span>Transport team, 2 patients in room 704</span></li>
+              <li><code>E4</code><span>East stairwell door, guiding walkers down</span></li>
+              <li><code>E5</code><span>Skybridge, handing over beds to Building A</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="situation">
+    <div class="wrap">
+      <div class="eyebrow">SITUATION</div>
+      <h2>Situation overview</h2>
+      <p class="intro">The Hospital Incident Command System (HICS) is active and the fire department is on scene. Patients and visitors: follow staff in orange vests, stay low, and move to the nearest safe stairwell.</p>
+      <div class="stats">
+        <div class="stat"><span>Still to evacuate</span><b id="sRemain">38</b><small>24 patients · 14 staff</small></div>
+        <div class="stat"><span>Evacuated</span><b id="sDone">212</b><small>incl. 41 bed-bound patients</small></div>
+        <div class="stat hot"><span>Injured, sent to ER</span><b>3</b><small>smoke inhalation, all conscious</small></div>
+        <div class="stat"><span>Fire units on scene</span><b>14</b><small>2 ladder trucks · 6 ambulances</small></div>
+      </div>
+      <div class="progress">
+        <div class="top"><span>Evacuation progress, affected zone</span><span id="pct">85%</span></div>
+        <div class="bar" role="progressbar" aria-label="Evacuation progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="85" id="barWrap"><i id="bar" style="width:85%"></i></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="floors">
+    <div class="wrap">
+      <div class="eyebrow">FLOOR STATUS</div>
+      <h2>Building B by floor</h2>
+      <div class="pills">
+        <span class="pill crit">Fire · no entry</span>
+        <span class="pill warn">Evacuating</span>
+        <span class="pill ok">Cleared / safe</span>
+      </div>
+      <div class="floors">
+        <div class="floor"><span class="no">9F</span><span class="name"><b>Administration offices</b><small>Smoke monitoring above fire floor; staff moved down</small></span><span class="pill ok">Cleared</span></div>
+        <div class="floor"><span class="no">8F</span><span class="name"><b>Medical wards 8A / 8B</b><small>6 bed-bound patients left, nurses escorting transfer</small></span><span class="pill warn">Evacuating</span></div>
+        <div class="floor is-fire"><span class="no">7F</span><span class="name"><b>Surgical ward 7B, pantry</b><small>Origin of fire. Fire doors closed, crews attacking</small></span><span class="pill crit">Fire</span></div>
+        <div class="floor"><span class="no">6F</span><span class="name"><b>Medical ICU</b><small>8 ventilated patients, horizontal move to Building A 6F</small></span><span class="pill warn">Evacuating</span></div>
+        <div class="floor"><span class="no">5F</span><span class="name"><b>Pediatric ward</b><small>Precautionary evacuation complete</small></span><span class="pill ok">Cleared</span></div>
+        <div class="floor"><span class="no">1–4F</span><span class="name"><b>Outpatients, labs, operating rooms</b><small>Clinics paused; ongoing surgeries finish before patients move</small></span><span class="pill ok">Safe</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="reports">
+    <div class="wrap">
+      <div class="eyebrow">FIELD REPORTS</div>
+      <h2>Status reports from the floor</h2>
+      <div class="rep">
+        <form class="form" id="repForm" novalidate>
+          <h3>Send a status report</h3>
+          <div class="row2">
+            <div class="field"><label for="rUnit">Your unit / call sign</label><input id="rUnit" maxlength="40" placeholder="e.g. Nurse 8A, Engine 21" autocomplete="off" required></div>
+            <div class="field"><label for="rLoc">Location</label>
+              <select id="rLoc">
+                <option>Bldg B · 9F</option><option>Bldg B · 8F</option><option selected>Bldg B · 7F</option><option>Bldg B · 6F</option><option>Bldg B · 5F</option><option>Bldg B · 1–4F</option><option>East stairwell</option><option>West stairwell</option><option>Skybridge to Bldg A</option><option>Assembly point 1</option><option>Assembly point 2</option><option>Emergency Dept</option>
+              </select></div>
+          </div>
+          <div class="field"><label for="rType">Report type</label>
+            <select id="rType">
+              <option>Fire / smoke spread</option><option>Persons trapped</option><option>Casualty / injury</option><option>Area cleared</option><option>Resource request</option><option>Route blocked</option><option>Other</option>
+            </select></div>
+          <fieldset class="field">
+            <legend>Priority</legend>
+            <div class="prio">
+              <label><input type="radio" name="prio" id="pC" value="critical"><span class="c">Critical</span></label>
+              <label><input type="radio" name="prio" id="pU" value="urgent" checked><span class="u">Urgent</span></label>
+              <label><input type="radio" name="prio" id="pR" value="routine"><span class="r">Routine</span></label>
+            </div>
+          </fieldset>
+          <div class="field"><label for="rMsg">Details</label><textarea id="rMsg" maxlength="500" placeholder="What you see, how many people, what you need" required></textarea></div>
+          <button class="btn" id="rSend" type="submit">Send report</button>
+          <p class="msg" id="rStatus" role="status"></p>
+        </form>
+
+        <div>
+          <p class="note" id="localNote" hidden>Live sharing is not available in this view. Reports you send stay on this screen only.</p>
+          <div class="feed-head">
+            <div class="counts"><span class="pill crit" id="cCrit">0 critical open</span><span class="pill muted" id="cAll">0 reports</span></div>
+            <div class="filter" role="group" aria-label="Filter reports">
+              <button type="button" data-f="open" aria-pressed="true">Open</button>
+              <button type="button" data-f="all" aria-pressed="false">All</button>
+              <button type="button" data-f="critical" aria-pressed="false">Critical</button>
+            </div>
+          </div>
+          <ul class="feed" id="feed"></ul>
+          <div class="empty" id="empty"><b>No field reports yet</b>Use the form to send the first one. Everyone with this board open sees it right away.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="updates">
+    <div class="wrap two">
+      <div>
+        <div class="eyebrow">LIVE UPDATES</div>
+        <h2>Command bulletins</h2>
+        <ul class="list">
+          <li class="new"><span class="num">NO. 07</span><b><time>23:41</time>Last 8F patients now moving</b><p>Carried down the east stairwell on evacuation sleds, expected done in 15 minutes.</p></li>
+          <li><span class="num">NO. 06</span><b><time>23:34</time>ER open to walk-in patients only</b><p>Ambulance arrivals diverted to other hospitals in Luxembourg City and Esch-sur-Alzette. For emergencies, call 112.</p></li>
+          <li><span class="num">NO. 05</span><b><time>23:26</time>6 of 8 ICU beds moved to Building A</b><p>Ventilators and monitors travel with each patient. Building A 6F has 10 beds ready.</p></li>
+          <li><span class="num">NO. 04</span><b><time>23:19</time>All Building B elevators stopped</b><p>Only the firefighter lift stays in service, for fire crews.</p></li>
+        </ul>
+        <a class="more" href="#updates">Show more</a>
+      </div>
+      <div id="factcheck">
+        <div class="eyebrow">FACT CHECK</div>
+        <h2>Rumor check</h2>
+        <ul class="list">
+          <li><span class="num">NO. 03</span><b>FALSE: "The whole hospital lost power and patients were left behind"</b><p>Only part of Building B 7F lost power. Buildings A and C run normally on backup generators.</p></li>
+          <li><span class="num">NO. 02</span><b>FALSE: "The fire has spread to Building A"</b><p>Fire compartments are holding. Building A is working normally and receiving evacuated patients.</p></li>
+          <li><span class="num">NO. 01</span><b>PLEASE NOTE: Families, do not enter the campus to collect patients</b><p>Register at Assembly Point 2. Social workers will tell you where your family member is.</p></li>
+        </ul>
+        <a class="more" href="#factcheck">Show more</a>
+      </div>
+    </div>
+  </section>
+
+  <section id="assembly">
+    <div class="wrap">
+      <div class="eyebrow">ASSEMBLY POINTS</div>
+      <h2>Assembly and shelter</h2>
+      <div class="points">
+        <div class="point"><div class="head"><b>1 · Main entrance plaza</b><span class="pill ok">Open</span></div><p>Walking patients, outpatients, staff roll call</p><p>People here: <span class="count">146</span></p></div>
+        <div class="point"><div class="head"><b>2 · Family help desk</b><span class="pill ok">Open</span></div><p>Building A lobby, 1F. Social workers locate patients</p><p>People here: <span class="count">63</span></p></div>
+        <div class="point"><div class="head"><b>3 · Building B rear car park</b><span class="pill crit">Closed</span></div><p>Fire apparatus staging. Keep clear</p><p>People here: <span class="count">0</span></p></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="cta">
+    <div class="wrap">
+      <div>
+        <div class="eyebrow">FAMILY HOTLINE</div>
+        <h3>Family information line, 24 hours</h3>
+      </div>
+      <div class="hotline">
+        <code id="tel">+352 555 0199</code>
+        <button class="btn" id="copyBtn" type="button">Copy number</button>
+      </div>
+    </div>
+  </div>
+</main>
+
+<a class="fab" id="fab" href="#reports" aria-label="Report status: open the field report form">
+  <span class="fab-dot" aria-hidden="true"></span>
+  <span class="fab-text"><b>Report status</b><small id="fabSub">No reports yet</small></span>
+  <span class="fab-crit" id="fabCrit" hidden>0</span>
+</a>
+
+<footer>
+  <div class="wrap">
+    <div><h4>HÔPITAL BEL-ALZETTE EMERGENCY COMMAND</h4><p>47, rue des Glycines Bleues, L-1999 Luxembourg<br>Main switchboard +352 555 0100<br>Command post: Building A, 2F conference room · Incident commander: Office of the Medical Director</p></div>
+    <div><h4>BOARD UPDATES</h4><p>Figures refresh every 30 seconds. Field reports appear live.</p></div>
+    <div><h4>IN A FIRE</h4><p>Never use elevators. Cover your nose and mouth with a damp cloth. Stay low and follow the wall.</p></div>
+  </div>
+  <div class="demo">Demonstration layout. Hôpital Bel-Alzette, its address, phone numbers and all figures are fictional.</div>
+</footer>
+
+<script>
+(function(){
+  const $=id=>document.getElementById(id);
+  const pad=n=>String(n).padStart(2,'0');
+  const hm=t=>{const d=new Date(t);return pad(d.getHours())+':'+pad(d.getMinutes())};
+
+  /* clock + simulated figures */
+  const start=new Date(Date.now()-(42*60+17)*1000);
+  let countdown=30, remain=38, done=212; const total=250;
+  function fmt(s){return pad(Math.floor(s/3600))+':'+pad(Math.floor(s/60)%60)+':'+pad(s%60)}
+  function tick(){
+    const now=new Date();
+    $('now').textContent=pad(now.getHours())+':'+pad(now.getMinutes())+':'+pad(now.getSeconds());
+    $('elapsed').textContent=fmt(Math.floor((now-start)/1000));
+    if(--countdown<=0){countdown=30;refresh();}
+    $('next').textContent='00:'+pad(countdown);
+  }
+  function refresh(){
+    if(remain>0){const m=Math.min(remain,Math.ceil(Math.random()*3));remain-=m;done+=m;}
+    $('sRemain').textContent=remain;$('sDone').textContent=done;
+    const p=Math.round(done/total*100);
+    $('pct').textContent=p+'%';$('bar').style.width=p+'%';$('barWrap').setAttribute('aria-valuenow',p);
+  }
+  tick();setInterval(tick,1000);
+
+  /* 3D floor plan */
+  const map=$('planScroll'), stage=$('stage');
+  const H=36, walls=[];
+  const add=(x1,y1,x2,y2,c)=>walls.push({x1,y1,x2,y2,c:c||''});
+  const hot=(a,b)=>((a+b)/2>260&&(a+b)/2<380)?'hot':'';
+  function line(horiz,k,a,b,gaps,cf){
+    let s=a;
+    for(const g of gaps){ if(g[0]>s){const c=cf?cf(s,g[0]):'';horiz?add(s,k,g[0],k,c):add(k,s,k,g[0],c);} s=Math.max(s,g[1]); }
+    if(s<b){const c=cf?cf(s,b):'';horiz?add(s,k,b,k,c):add(k,s,k,b,c);}
+  }
+  line(true,40,40,960,[[260,260],[380,380]],hot);
+  line(true,480,40,960,[]);
+  line(false,40,40,480,[]);
+  line(false,960,40,480,[[230,290]]);
+  line(true,220,40,960,[[70,115],[260,260],[300,340],[380,380],[420,450],[545,575],[665,695],[780,810],[890,925]],hot);
+  line(true,300,40,960,[[72,110],[180,210],[300,330],[420,540],[695,725],[795,825],[900,930]]);
+  [140,260,380,500,620,740,860].forEach(x=>add(x,40,x,220,(x===260||x===380)?'hot':''));
+  [140,260,380,560,660,760,860].forEach(x=>add(x,300,x,480));
+  add(960,230,1040,230); add(960,290,1040,290);
+  add(400,220,400,300,'firedoor');
+  for(const w of walls){
+    const dx=w.x2-w.x1, dy=w.y2-w.y1, len=Math.hypot(dx,dy), ang=Math.atan2(dy,dx)*180/Math.PI;
+    const d=document.createElement('div');
+    d.className='wall'+(dx===0?' v':'')+(w.c?' '+w.c:'');
+    d.style.width=len+'px';
+    d.style.transform=`translate(${w.x1}px,${w.y1}px) rotateZ(${ang}deg) rotateX(90deg)`;
+    stage.append(d);
+  }
+  const flame='<svg viewBox="-12 -17 24 34" aria-hidden="true"><path fill="#ffd166" d="M0 -16 C7 -8 11 -2 11 5 C11 12 6 16 0 16 C-6 16 -11 12 -11 5 C-11 -1 -6 -4 -4 -10 C-3 -5 -1 -3 1 -2 C2 -7 1 -12 0 -16Z"/></svg>';
+  const pins=[
+    {x:320,y:140,k:'fire',html:'<span class="tag">FIRE</span><span class="badge">'+flame+'</span><span class="stem"></span>'},
+    {x:290,y:196,k:'ff',t:'F1'},{x:352,y:196,k:'ff',t:'F2'},{x:200,y:262,k:'ff',t:'F3'},{x:90,y:170,k:'ff',t:'F4'},
+    {x:620,y:262,k:'ev',t:'E1'},{x:470,y:400,k:'ev',t:'E2'},{x:705,y:150,k:'ev',t:'E3'},{x:935,y:190,k:'ev',t:'E4'},{x:1000,y:260,k:'ev',t:'E5'}
+  ];
+  const lay={ff:'lay-ff',ev:'lay-ev',fire:''};
+  for(const p of pins){
+    const bb=document.createElement('div'); bb.className='bb '+lay[p.k];
+    bb.innerHTML='<div class="pin '+p.k+'">'+(p.html||('<span class="badge">'+p.t+'</span><span class="stem"></span><span class="foot"></span>'))+'</div>';
+    stage.append(bb); p.el=bb;
+  }
+  const HOME={x:0,y:20,z:1,rot:-24,tilt:54};
+  const v=Object.assign({},HOME); let fit=1;
+  const clampZ=z=>Math.min(5,Math.max(.4,z));
+  function apply(){
+    stage.style.transform=`translate(${v.x}px,${v.y}px) scale(${fit*v.z}) rotateX(${v.tilt}deg) rotateZ(${v.rot}deg)`;
+    for(const p of pins) p.el.style.transform=`translate(${p.x-45}px,${p.y-130}px) rotateZ(${-v.rot}deg) rotateX(${-v.tilt}deg)`;
+    $('zoomLvl').textContent=Math.round(v.z*100)+'%';
+    $('modeBtn').textContent=v.tilt>0?'2D':'3D';
+    $('modeBtn').setAttribute('aria-label',v.tilt>0?'Switch to flat 2D view':'Switch to 3D view');
+  }
+  function sizeFit(){const w=map.clientWidth,h=map.clientHeight;fit=w<600?Math.min(w/700,h/500):Math.min(w/1180,h/600);}
+  function zoomAt(k,cx,cy){
+    const nz=clampZ(v.z*k); k=nz/v.z;
+    v.x=cx-(cx-v.x)*k; v.y=cy-(cy-v.y)*k; v.z=nz; apply();
+  }
+  function rel(e){const r=map.getBoundingClientRect();return [e.clientX-r.left-r.width/2,e.clientY-r.top-r.height/2];}
+  map.addEventListener('wheel',e=>{e.preventDefault();const [cx,cy]=rel(e);zoomAt(Math.exp(-e.deltaY*0.0015),cx,cy);},{passive:false});
+  const pts=new Map(); let last=null;
+  map.addEventListener('pointerdown',e=>{
+    if(e.target.closest('.map-ctrl'))return;
+    map.setPointerCapture(e.pointerId); pts.set(e.pointerId,[e.clientX,e.clientY]); map.classList.add('dragging');
+  });
+  map.addEventListener('pointermove',e=>{
+    if(!pts.has(e.pointerId))return;
+    const prev=pts.get(e.pointerId); const cur=[e.clientX,e.clientY];
+    if(pts.size===1){v.x+=cur[0]-prev[0];v.y+=cur[1]-prev[1];pts.set(e.pointerId,cur);apply();return;}
+    const other=[...pts].find(([id])=>id!==e.pointerId)[1];
+    const d0=Math.hypot(prev[0]-other[0],prev[1]-other[1]), d1=Math.hypot(cur[0]-other[0],cur[1]-other[1]);
+    pts.set(e.pointerId,cur);
+    if(d0>0){const r=map.getBoundingClientRect();zoomAt(d1/d0,(cur[0]+other[0])/2-r.left-r.width/2,(cur[1]+other[1])/2-r.top-r.height/2);}
+  });
+  const up=e=>{pts.delete(e.pointerId);if(!pts.size)map.classList.remove('dragging');};
+  map.addEventListener('pointerup',up); map.addEventListener('pointercancel',up);
+  const STEP=90;
+  const acts={
+    in:()=>zoomAt(1.25,0,0), out:()=>zoomAt(1/1.25,0,0),
+    up:()=>{v.y+=STEP;apply()}, down:()=>{v.y-=STEP;apply()}, left:()=>{v.x+=STEP;apply()}, right:()=>{v.x-=STEP;apply()},
+    rl:()=>{v.rot-=30;apply()}, rr:()=>{v.rot+=30;apply()},
+    mode:()=>{v.tilt=v.tilt>0?0:HOME.tilt;apply()},
+    reset:()=>{Object.assign(v,HOME);apply()}
+  };
+  map.querySelectorAll('[data-act]').forEach(b=>b.addEventListener('click',()=>acts[b.dataset.act]()));
+  map.addEventListener('keydown',e=>{
+    if(e.target!==map)return;
+    const k={ArrowUp:'up',ArrowDown:'down',ArrowLeft:'left',ArrowRight:'right','+':'in','=':'in','-':'out','0':'reset'}[e.key];
+    if(k){e.preventDefault();acts[k]();}
+  });
+  try{new ResizeObserver(()=>{sizeFit();apply();}).observe(map);}catch(e){}
+  sizeFit(); apply();
+  document.querySelectorAll('.layers input').forEach(cb=>{
+    cb.addEventListener('change',()=>map.classList.toggle(cb.dataset.cls,!cb.checked));
+  });
+
+  /* copy hotline */
+  $('copyBtn').addEventListener('click',()=>{
+    const b=$('copyBtn'),t=$('tel').textContent;
+    const ok=()=>{b.textContent='Copied';setTimeout(()=>b.textContent='Copy number',1600)};
+    const sel=()=>{const r=document.createRange();r.selectNodeContents($('tel'));const s=getSelection();s.removeAllRanges();s.addRange(r);b.textContent='Selected, copy it manually'};
+    try{navigator.clipboard.writeText(t).then(ok,sel)}catch(e){sel()}
+  });
+
+  /* field reports */
+  let reports=[]; let filter='open'; let col=null; let readOnly=false;
+  const PRIO={critical:{label:'Critical',cls:'crit'},urgent:{label:'Urgent',cls:'warn'},routine:{label:'Routine',cls:'ok'}};
+
+  $('fab').addEventListener('click',e=>{
+    e.preventDefault();
+    const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+    $('reports').scrollIntoView({behavior:reduce?'auto':'smooth',block:'start'});
+    const f=$('repForm'); f.classList.remove('flash'); void f.offsetWidth; f.classList.add('flash');
+    setTimeout(()=>{ (($('rUnit').value.trim())?$('rMsg'):$('rUnit')).focus({preventScroll:true}); },reduce?0:450);
+  });
+  function render(){
+    const openCrit=reports.filter(r=>r.priority==='critical'&&!r.resolved).length;
+    $('cCrit').textContent=openCrit+' critical open';
+    $('cAll').textContent=reports.length+(reports.length===1?' report':' reports');
+    const latest=reports.reduce((m,r)=>r.time>(m?m.time:0)?r:m,null);
+    $('fabSub').textContent=latest?('Last report '+hm(latest.time)+' · '+(latest.location||'')):'No reports yet';
+    $('fabCrit').hidden=!openCrit; $('fabCrit').textContent=openCrit;
+    $('fab').setAttribute('aria-label','Report status: open the field report form'+(openCrit?'. '+openCrit+' critical reports open':''));
+    let list=reports.slice().sort((a,b)=>b.time-a.time);
+    if(filter==='open')list=list.filter(r=>!r.resolved);
+    if(filter==='critical')list=list.filter(r=>r.priority==='critical');
+    const feed=$('feed');feed.replaceChildren();
+    $('empty').hidden=list.length>0;
+    if(!list.length&&reports.length){$('empty').innerHTML='<b>Nothing in this view</b>Switch the filter to All to see every report.';}
+    else if(!reports.length){$('empty').innerHTML='<b>No field reports yet</b>Use the form to send the first one. Everyone with this board open sees it right away.';}
+    for(const r of list){
+      const p=PRIO[r.priority]||PRIO.routine;
+      const li=document.createElement('li');li.className='item p-'+(r.priority||'routine')+(r.resolved?' resolved':'');
+      const top=document.createElement('div');top.className='top';
+      const tm=document.createElement('time');tm.textContent=hm(r.time);
+      const pill=document.createElement('span');pill.className='pill '+(r.resolved?'muted':p.cls);pill.textContent=r.resolved?'Resolved':p.label;
+      const b=document.createElement('b');b.textContent=(r.type||'Report')+' · '+(r.location||'');
+      top.append(tm,pill,b);
+      const msg=document.createElement('p');msg.textContent=r.message||'';
+      const meta=document.createElement('div');meta.className='meta';
+      const who=document.createElement('span');who.textContent='From '+(r.unit||'unknown unit');
+      meta.append(who);
+      if(!r.resolved&&!readOnly){
+        const btn=document.createElement('button');btn.type='button';btn.className='btn-sm';btn.textContent='Mark resolved';
+        btn.addEventListener('click',()=>resolve(r,btn));meta.append(btn);
+      }
+      li.append(top,msg,meta);feed.append(li);
+    }
+  }
+  async function resolve(r,btn){
+    btn.disabled=true;
+    if(col){
+      try{await col.doc(r.id).update({resolved:true,resolvedAt:Date.now()});}
+      catch(e){btn.disabled=false;status(e&&e.code==='invalid_argument'?'You can view reports but not change them on this board.':'Could not update the report. Try again.',true);}
+    }else{r.resolved=true;render();}
+  }
+  function status(t,err){const s=$('rStatus');s.textContent=t;s.className='msg '+(err?'err':'good');}
+
+  document.querySelectorAll('.filter button').forEach(b=>b.addEventListener('click',()=>{
+    filter=b.dataset.f;document.querySelectorAll('.filter button').forEach(x=>x.setAttribute('aria-pressed',x===b?'true':'false'));render();
+  }));
+
+  $('repForm').addEventListener('submit',async e=>{
+    e.preventDefault();
+    const unit=$('rUnit').value.trim(), message=$('rMsg').value.trim();
+    if(!unit){status('Enter your unit or call sign so command can reach you.',true);$('rUnit').focus();return;}
+    if(!message){status('Add the details: what you see and what you need.',true);$('rMsg').focus();return;}
+    const data={time:Date.now(),unit,location:$('rLoc').value,type:$('rType').value,
+      priority:(document.querySelector('input[name="prio"]:checked')||{}).value||'urgent',message,resolved:false};
+    const btn=$('rSend');btn.disabled=true;
+    try{
+      if(col){await col.add(data);}
+      else{reports.push(Object.assign({id:'local-'+data.time},data));render();}
+      $('rMsg').value='';status('Report sent at '+hm(data.time)+'.',false);
+    }catch(err){
+      const c=err&&err.code;
+      status(c==='invalid_argument'?'You can view reports but not send them on this board. Ask the board owner for Contributor access.':
+             c==='quota_exceeded'?'The report log is full. Ask command to archive old reports.':'Could not send the report. Check your connection and try again.',true);
+    }finally{btn.disabled=false;}
+  });
+
+  render();
+  (async()=>{
+    let db=null;
+    try{db=window.claude&&window.claude.use?await window.claude.use('db'):null;}catch(e){db=null}
+    if(!db){$('localNote').hidden=false;return;}
+    col=db.collection('reports');
+    col.orderBy('time','desc').limit(200).onSnapshot(snap=>{
+      reports=snap.docs.map(d=>Object.assign({id:d.id},d.data()));render();
+    },err=>{$('localNote').hidden=false;$('localNote').textContent='Live reports stopped updating. Reload the board to reconnect.';});
+  })();
+})();
+</script>
+
+</body>
+</html>
